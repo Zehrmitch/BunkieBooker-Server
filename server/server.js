@@ -44,6 +44,7 @@ var setUser = async function (req, res, next) {
 		};
 	}
 
+	console.log(req);
 	const user = await prisma.user.findUnique({
 		where: {
 			email: req.user.email,
@@ -64,6 +65,8 @@ var setUser = async function (req, res, next) {
 
 	// Login / sign up the user
 	// check data base
+
+	console.log(req);
 	next();
 };
 
