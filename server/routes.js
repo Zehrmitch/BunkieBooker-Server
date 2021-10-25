@@ -1,5 +1,9 @@
 const { prisma } = require('.prisma/client');
 
+// var notesRouter = new router({
+// 	prefix: '/api/v1',
+// });
+
 module.exports = function (app, authMiddleware) {
 	app.get('/', (req, res) => {
 		res.send('Hello World!');
@@ -22,12 +26,15 @@ module.exports = function (app, authMiddleware) {
 		});
 	});
 
-	// app.get('/api/v1/spaces', authMiddleware, function (req, res) {
-	// 	const spaces = await prisma.spaces.findMany({});
-
-	// 	res.json({
-	// 		status: 200,
-	// 		// req.user
-	// 	});
-	// });
+	app.get('/api/v1/spaces', async function (req, res) {
+		const spaces = await prisma.Space.findMany({});
+		res.json({
+			message: 'Valid token',
+			status: 200,
+			name: req.space.name,
+			space: spaces,
+		});
+	});
 };
+
+//module.exports = notesRouter.routes();
