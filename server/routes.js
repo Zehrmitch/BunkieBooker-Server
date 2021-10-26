@@ -1,13 +1,7 @@
-<<<<<<< HEAD
-const { prisma } = require('.prisma/client');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
-// var notesRouter = new router({
-// 	prefix: '/api/v1',
-// });
-
-=======
->>>>>>> parent of 1a0b646 (Database schema changes)
-module.exports = function (app, authMiddleware) {
+module.exports = async function (app, authMiddleware) {
 	app.get('/', (req, res) => {
 		res.send('Hello World!');
 	});
@@ -28,19 +22,13 @@ module.exports = function (app, authMiddleware) {
 			first_name: req.user.first_name,
 		});
 	});
-<<<<<<< HEAD
 
-	app.get('/api/v1/spaces', async function (req, res) {
-		const spaces = await prisma.Space.findMany({});
+	app.get('/api/users', async function (req, res) {
+		const users = await prisma.user.findMany({});
 		res.json({
 			message: 'Valid token',
 			status: 200,
-			name: req.space.name,
-			space: spaces,
+			user: users,
 		});
 	});
-=======
->>>>>>> parent of 1a0b646 (Database schema changes)
 };
-
-//module.exports = notesRouter.routes();
