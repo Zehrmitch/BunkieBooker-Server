@@ -31,4 +31,23 @@ module.exports = async function (app, authMiddleware) {
 			user: users,
 		});
 	});
+
+	app.get('/api/spaces', async function (req, res) {
+		const spaces = await prisma.space.findMany({});
+		res.json({
+			status: 200,
+			spaces: spaces,
+		});
+	});
+
+	app.get('/api/space/:id', async function (req, res) {
+		const { id } = req.params;
+		const space = await prisma.space.findMany({
+			where: { id: Number(id) },
+		});
+		res.json({
+			status: 200,
+			space: space,
+		});
+	});
 };
