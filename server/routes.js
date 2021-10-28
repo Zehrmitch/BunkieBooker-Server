@@ -35,7 +35,6 @@ module.exports = async function (app, authMiddleware) {
 	app.get('/api/spaces', async function (req, res) {
 		const spaces = await prisma.space.findMany({});
 		res.json({
-			status: 200,
 			spaces: spaces,
 		});
 	});
