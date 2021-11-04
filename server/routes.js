@@ -49,4 +49,21 @@ module.exports = async function (app, authMiddleware) {
 			space: space,
 		});
 	});
+
+	app.get('/api/mySpace/:email', async function (req, res) {
+		const { email } = req.params;
+		const propertyOwner = await prisma.user.findMany({
+			where: { email: String(email) },
+		});
+		const id = propertyOwner.id;
+		console.log(id);
+		const spaces = await prisma.space.findMany({
+			where: { userId: id },
+		});
+		res.json({
+			status: 200,
+			user: propertyOwner,
+			spaces: spaces,
+		});
+	});
 };
