@@ -6,11 +6,13 @@ var jwt = require('express-jwt');
 var jwks = require('jwks-rsa');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const pino = require('express-pino-logger');
 
 require('dotenv').config();
 
 app.use(cors());
 app.use(express.json());
+app.use(pino());
 
 var jwtCheck = jwt({
 	secret: jwks.expressJwtSecret({
@@ -25,12 +27,15 @@ var jwtCheck = jwt({
 });
 
 var errorCheck = function (err, req, res, next) {
+	console.log('error check');
 	if (err.name === 'UnauthorizedError') {
 		res.status(401).json({ message: 'Invalid token', status: 401 });
 	}
+	next();
 };
 
 var setUser = async function (req, res, next) {
+	console.log('set user');
 	if (req.user.sub === process.env.TEST_SUB) {
 		// Check if test token
 		req.user = {
@@ -62,12 +67,8 @@ var setUser = async function (req, res, next) {
 	}
 
 	req.user = user;
-
-	// Login / sign up the user
-	// check data base
-
 	console.log(req);
-	next();
+	next(req);
 };
 
 const authMiddleware = [jwtCheck, errorCheck, setUser];
