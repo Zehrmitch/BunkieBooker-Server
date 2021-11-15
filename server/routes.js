@@ -1,5 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 
 module.exports = async function (app, authMiddleware) {
 	app.get('/', (req, res) => {
@@ -59,5 +61,12 @@ module.exports = async function (app, authMiddleware) {
 			status: 200,
 			spaces: spaces,
 		});
+	});
+
+	app.post('/api/images', upload.single('image'), (req, res) => {
+		const file = req.file;
+		// use file.path and file.name
+		const description = req.body.description;
+		res.send('/images');
 	});
 };
