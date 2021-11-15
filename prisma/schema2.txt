@@ -22,7 +22,7 @@ model Space {
   space_type    Space_Type @default(HOUSE)
   name          String
   description   String
-  availability  Boolean    @default(true)
+  availability  String     @default("Available")
   price         String
   user          User       @relation(fields: [userId], references: [id])
   userId        Int
@@ -67,4 +67,43 @@ enum Image_Type {
   COVER
   PROFILE
   SPACE
+}
+
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id         Int     @id @default(autoincrement())
+  email      String  @unique
+  first_name String
+  last_name  String
+  spaces     Space[]
+  role       Role    @default(USER)
+}
+
+model Space {
+  id           Int    @id @default(autoincrement())
+  name         String
+  description  String
+  availability String
+  price        String
+  imageUrl     String
+  user         User   @relation(fields: [userId], references: [id])
+  userId       Int
+}
+
+// bookings
+
+// spaces
+
+enum Role {
+  USER
+  ADMIN
 }
