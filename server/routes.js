@@ -1,7 +1,11 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const bucketName = process.env.AWS_BUCKET_NAME;
+const region = process.env.AWS_BUCKET_LOCATION;
+const accessKeyId = process.env.AWS_ACCESS_KEY;
+const secretAcessKey = process.env.AWS_SECRET_ACCESS_KEY;
 const multer = require('multer');
-const upload = multer({ dest: 'uploads/' });
+const s3 = require('multer-s3');
 
 module.exports = async function (app, authMiddleware) {
 	app.get('/', (req, res) => {
@@ -35,7 +39,12 @@ module.exports = async function (app, authMiddleware) {
 	});
 
 	app.get('/api/spaces', async function (req, res) {
-		const spaces = await prisma.space.findMany({});
+		const spaces = await prisma.space.findMany({
+			include: {
+				images: true,
+				location: true,
+			},
+		});
 		res.json({
 			spaces: spaces,
 		});
@@ -45,9 +54,12 @@ module.exports = async function (app, authMiddleware) {
 		const { id } = req.params;
 		const space = await prisma.space.findMany({
 			where: { id: Number(id) },
+			include: {
+				images: true,
+				location: true,
+			},
 		});
 		res.json({
-			status: 200,
 			space: space,
 		});
 	});
@@ -61,12 +73,5 @@ module.exports = async function (app, authMiddleware) {
 			status: 200,
 			spaces: spaces,
 		});
-	});
-
-	app.post('/api/images', upload.single('image'), (req, res) => {
-		const file = req.file;
-		// use file.path and file.name
-		const description = req.body.description;
-		res.send('/images');
 	});
 };

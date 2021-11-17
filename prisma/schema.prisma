@@ -22,6 +22,7 @@ model Space {
   space_type    Space_Type @default(HOUSE)
   name          String
   description   String
+  information   String?
   availability  Boolean    @default(true)
   price         String
   user          User       @relation(fields: [userId], references: [id])

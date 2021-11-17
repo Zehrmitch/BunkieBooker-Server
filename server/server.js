@@ -7,12 +7,10 @@ var jwks = require('jwks-rsa');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const pino = require('express-pino-logger');
-
 require('dotenv').config();
-
 app.use(cors());
 app.use(express.json());
-app.use(pino());
+//app.use(pino());
 
 var jwtCheck = jwt({
 	secret: jwks.expressJwtSecret({
@@ -67,7 +65,6 @@ var setUser = async function (req, res, next) {
 	}
 
 	req.user = user;
-	console.log(req);
 	next(req);
 };
 
