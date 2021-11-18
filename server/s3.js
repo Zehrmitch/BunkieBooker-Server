@@ -1,38 +1,43 @@
 require('dotenv').config();
-const fs = require('fs');
-const S3 = require('aws-sdk/clients/s3');
 const bucketName = process.env.AWS_BUCKET_NAME;
 const region = process.env.AWS_BUCKET_LOCATION;
 const accessKeyId = process.env.AWS_ACCESS_KEY;
 const secretAcessKey = process.env.AWS_SECRET_ACCESS_KEY;
+var aws = require('aws-sdk');
 
-const s3 = new S3({
-	region,
-	accessKeyId,
-	secretAcessKey,
+// Configure aws with your accessKeyId and your secretAccessKey
+aws.config.update({
+	region: region, // Put your aws region here
+	accessKeyId: accessKeyId,
+	secretAccessKey: secretAcessKey,
 });
 
-// upload
-function uploadFile(file) {
-	const fileStream = fs.createReadStream(file.path);
-	const uploadParams = {
+// Now lets export this function so we can call it from somewhere else
+exports.sign_s3 = (req, res) => {
+	const s3 = new aws.S3(); // Create a new instance of S3
+
+	const fileName = req.body.fileName;
+	const fileType = req.body.fileType;
+	// Set up the payload of what we are sending to the S3 api
+	const s3Params = {
 		Bucket: bucketName,
-		Body: fileStream,
-		Key: file.filename,
+		Key: fileName,
+		Expires: 500,
+		ContentType: fileType,
+		ACL: 'public-read',
 	};
-
-	return s3.upload(uploadParams).promise();
-}
-
-// download
-
-function getFileStream(fileKey) {
-	const downloadParams = {
-		Key: fileKey,
-		Bucket: bucketName,
-	};
-
-	return s3.getObject(downloadParams).createReadStream();
-}
-
-(exports.uploadFile = uploadFile), getFileStream;
+	// Make a request to the S3 API to get a signed URL which we can use to upload our file
+	s3.getSignedUrl('putObject', s3Params, (err, data) => {
+		if (err) {
+			console.log(err);
+			res.json({ success: false, error: err });
+		}
+		// Data payload of what we are sending back, the url of the signedRequest and a URL where we can access the content after its saved.
+		const returnData = {
+			signedRequest: data,
+			url: `https://${bucketName}.s3.amazonaws.com/${fileName}`,
+		};
+		// Send it all back
+		res.json({ success: true, data: { returnData } });
+	});
+};

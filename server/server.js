@@ -11,6 +11,7 @@ require('dotenv').config();
 app.use(cors());
 app.use(express.json());
 //app.use(pino());
+var sign_s3 = require('./s3');
 
 var jwtCheck = jwt({
 	secret: jwks.expressJwtSecret({
@@ -71,6 +72,8 @@ var setUser = async function (req, res, next) {
 const authMiddleware = [jwtCheck, errorCheck, setUser];
 
 require('./routes')(app, authMiddleware, prisma);
+
+app.use('/sign_s3', sign_s3.sign_s3);
 
 app.listen(port, () => {
 	console.log(`Example app listening at http://localhost:${port}`);

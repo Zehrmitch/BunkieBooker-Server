@@ -1,11 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const bucketName = process.env.AWS_BUCKET_NAME;
-const region = process.env.AWS_BUCKET_LOCATION;
-const accessKeyId = process.env.AWS_ACCESS_KEY;
-const secretAcessKey = process.env.AWS_SECRET_ACCESS_KEY;
-const multer = require('multer');
-const s3 = require('multer-s3');
 
 module.exports = async function (app, authMiddleware) {
 	app.get('/', (req, res) => {
