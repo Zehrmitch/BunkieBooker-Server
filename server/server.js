@@ -52,7 +52,6 @@ var setUser = async function (req, res, next) {
 	const user = await prisma.user.findUnique({
 		where: {
 			email: req.user.email,
-			id: req.user.id,
 		},
 	});
 
