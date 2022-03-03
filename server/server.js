@@ -6,7 +6,6 @@ var jwt = require('express-jwt');
 var jwks = require('jwks-rsa');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const pino = require('express-pino-logger');
 require('dotenv').config();
 app.use(cors());
 app.use(express.json());
@@ -48,21 +47,30 @@ var setUser = async function (req, res, next) {
 		};
 	}
 
-	console.log(req);
-	const user = await prisma.user.findUnique({
-		where: {
-			email: req.user.email,
-		},
-	});
-
-	if (!user) {
-		user = await prisma.user.create({
-			data: {
-				first_name: req.user.given_name,
-				last_name: req.user.family_name,
+	console.log(req.user);
+	const user = await prisma.user
+		.findUnique({
+			where: {
 				email: req.user.email,
 			},
+		})
+		.catch((error) => {
+			console.log(error);
+			throw error;
 		});
+
+	if (!user) {
+		user = await prisma.user
+			.create({
+				data: {
+					first_name: req.user.given_name,
+					last_name: req.user.family_name,
+					email: req.user.email,
+				},
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 	}
 
 	req.user = user;

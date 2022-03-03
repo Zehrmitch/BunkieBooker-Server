@@ -7,14 +7,14 @@ var aws = require('aws-sdk');
 
 // Configure aws with your accessKeyId and your secretAccessKey
 aws.config.update({
-	region: region, // Put your aws region here
+	region: region,
 	accessKeyId: accessKeyId,
 	secretAccessKey: secretAcessKey,
 });
 
 // Now lets export this function so we can call it from somewhere else
 exports.sign_s3 = (req, res) => {
-	const s3 = new aws.S3(); // Create a new instance of S3
+	const s3 = new aws.S3();
 
 	const fileName = req.body.fileName;
 	const fileType = req.body.fileType;
