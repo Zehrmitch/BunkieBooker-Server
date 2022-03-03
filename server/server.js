@@ -48,16 +48,18 @@ var setUser = async function (req, res, next) {
 	}
 
 	console.log(req.user);
-	const user = await prisma.user
-		.findUnique({
-			where: {
-				email: req.user.email,
-			},
-		})
-		.catch((error) => {
-			console.log(error);
-			throw error;
-		});
+	if (user) {
+		const user = await prisma.user
+			.findUnique({
+				where: {
+					email: req.user.email,
+				},
+			})
+			.catch((error) => {
+				console.log(error);
+				throw error;
+			});
+	}
 
 	if (!user) {
 		user = await prisma.user
