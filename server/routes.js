@@ -70,7 +70,10 @@ module.exports = async function (app, authMiddleware) {
 	});
 
 	app.post('/api/create/space', async function (req, res) {
+
 		const { title, content, authorEmail } = req.body;
+
+		
 		const space = await prisma.space.create({
 			data: {
 				title,
@@ -81,4 +84,5 @@ module.exports = async function (app, authMiddleware) {
 		});
 		res.json(result);
 	});
+
 };

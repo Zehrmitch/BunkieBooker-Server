@@ -9,7 +9,6 @@ const prisma = new PrismaClient();
 require('dotenv').config();
 app.use(cors());
 app.use(express.json());
-//app.use(pino());
 var sign_s3 = require('./s3');
 
 var jwtCheck = jwt({
@@ -47,8 +46,7 @@ var setUser = async function (req, res, next) {
 		};
 	}
 
-	console.log(req.user);
-	if (user) {
+	if (req.user) {
 		const user = await prisma.user
 			.findUnique({
 				where: {
@@ -59,9 +57,7 @@ var setUser = async function (req, res, next) {
 				console.log(error);
 				throw error;
 			});
-	}
-
-	if (!user) {
+	} else {
 		user = await prisma.user
 			.create({
 				data: {
@@ -79,7 +75,7 @@ var setUser = async function (req, res, next) {
 	next(req);
 };
 
-const authMiddleware = [jwtCheck, errorCheck, setUser];
+const authMiddleware = [jwtCheck, errorCheck];
 
 require('./routes')(app, authMiddleware, prisma);
 
